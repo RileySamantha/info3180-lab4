@@ -60,7 +60,30 @@ def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('home'))
+    
+@app.route('/getfiles')
+def getfiles():
+    """list files in directory"""
+    file_list = []
+    for subdir, dirs, files in os.walk("app/static/uploads"):
+        for file in files:
+            if file[-4:] == '.jpg':
+                file_list.append("""<li> <img src="/static/uploads/{}" alt="picture" </li>""".format(file))
+            else:
+                file_list.append("<li> {} </li>".format(file))
+    return file_list
+    
 
+@app.route('/filelisting')
+def filelisting():
+    import os
+    rootdir = os.getcwd()
+    print rootdir
+    for subdir, dirs, files in os.walk(rootdir + app.config['UPLOAD_FOLDER']):
+        for file in files:
+            print os.path.join(subdir, file) 
+            
+        return render_template("filelisting.html", file_list=getfiles())
 
 ###
 # The functions below should be applicable to all Flask apps.
